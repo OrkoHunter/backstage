@@ -1,12 +1,11 @@
+name: Automatically add new TechDocs Issues and PRs to the GitHub project board
 # Development of TechDocs in Backstage is managed by this Kanban board - https://github.com/OrkoHunter/backstage/projects/1
 # New issues with TechDocs in their Title or docs-like-code label will be added to the board.
-
-name: Automatically add new TechDocs Issues and PRs to the GitHub project board
 
 on:
   issues:
     types: [opened, reopened, labeled, edited]
-  pull_requests:
+  pull_request:
     types: [opened, reopened, labeled, edited]
 
 env:
@@ -15,9 +14,9 @@ env:
 jobs:
   assign_issue_to_project:
     runs-on: ubuntu-latest
-    name: Add new issue/PR to the GitHub project board of TechDocs.
+    name: Add new issue to the GitHub project board of TechDocs.
     steps:
-      - name: Assign new issue/PR to Incoming based on its title.
+      - name: Assign new issue to Incoming based on its title.
         uses: srggrs/assign-one-project-github-action@1.2.0
         if: |
           contains(github.event.issue.title, 'TechDocs') ||
@@ -27,10 +26,31 @@ jobs:
           project: 'https://github.com/OrkoHunter/backstage/projects/1'
           column_name: 'Incoming'
 
-      - name: Assign new issue/PR to Incoming based on its label.
+      - name: Assign new issue to Incoming based on its label.
         uses: srggrs/assign-one-project-github-action@1.2.0
         if: |
           contains(github.event.issue.labels.*.name, 'docs-like-code')
+        with:
+          project: 'https://github.com/OrkoHunter/backstage/projects/1'
+          column_name: 'Incoming'
+
+  assign_pull_request_to_project:
+    runs-on: ubuntu-latest
+    name: Add new PR to the GitHub project board of TechDocs.
+    steps:
+      - name: Assign new PR to Incoming based on its title.
+        uses: srggrs/assign-one-project-github-action@1.2.0
+        if: |
+          contains(github.event.pull_request.title, 'TechDocs') ||
+          contains(github.event.pull_request.title, 'techdocs') ||
+          contains(github.event.pull_request.title, 'Techdocs')
+        with:
+          project: 'https://github.com/OrkoHunter/backstage/projects/1'
+          column_name: 'Incoming'
+      - name: Assign new PR to Incoming based on its label.
+        uses: srggrs/assign-one-project-github-action@1.2.0
+        if: |
+          contains(github.event.pull_request.labels.*.name, 'docs-like-code')
         with:
           project: 'https://github.com/OrkoHunter/backstage/projects/1'
           column_name: 'Incoming'
